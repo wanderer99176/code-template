@@ -58,7 +58,7 @@ pipx install cookiecutter
 用于快速原型或一次性脚本。
 
 ```bash
-cookiecutter gh:wanderer99176/code-template -d wanderer99176-py-template-01-mvp
+cookiecutter gh:wanderer99176/code-template --directory wanderer99176-py-template-01-mvp
 ```
 
 #### **模板二：小型脚本或简单工具**
@@ -66,7 +66,7 @@ cookiecutter gh:wanderer99176/code-template -d wanderer99176-py-template-01-mvp
 用于创建可分发的CLI工具或小型库。
 
 ```bash
-cookiecutter gh:wanderer99176/code-template -d wanderer99176-py-template-02-small
+cookiecutter gh:wanderer99176/code-template --directory wanderer99176-py-template-02-small
 ```
 
 #### **模板三：中型Web应用或库**
@@ -74,7 +74,7 @@ cookiecutter gh:wanderer99176/code-template -d wanderer99176-py-template-02-smal
 用于构建包含CI/CD和Docker的標準Web应用。
 
 ```bash
-cookiecutter gh:wanderer99176/code-template -d wanderer99176-py-template-03-medium
+cookiecutter gh:wanderer99176/code-template --directory wanderer99176-py-template-03-medium
 ```
 
 #### **模板五：大型、长期维护的项目**
@@ -82,7 +82,7 @@ cookiecutter gh:wanderer99176/code-template -d wanderer99176-py-template-03-medi
 用于启动复杂的、企业级的应用程序。
 
 ```bash
-cookiecutter gh:wanderer99176/code-template -d wanderer99176-py-template-05-enterprise
+cookiecutter gh:wanderer99176/code-template --directory wanderer99176-py-template-05-enterprise
 ```
 
 接下来，只需根据终端的提示回答几个关于您新项目的问题，一个结构完整、配置齐全的项目目录就会被自动创建。
@@ -155,7 +155,7 @@ pipx install cookiecutter
 用于快速原型或一次性脚本。
 
 ```bash
-cookiecutter gh:wanderer99176/code-template -d wanderer99176-py-template-01-mvp
+cookiecutter gh:wanderer99176/code-template --directory wanderer99176-py-template-01-mvp
 ```
 
 #### **模板二：小型脚本或简单工具**
@@ -163,7 +163,7 @@ cookiecutter gh:wanderer99176/code-template -d wanderer99176-py-template-01-mvp
 用于创建可分发的CLI工具或小型库。
 
 ```bash
-cookiecutter gh:wanderer99176/code-template -d wanderer99176-py-template-02-small
+cookiecutter gh:wanderer99176/code-template --directory wanderer99176-py-template-02-small
 ```
 
 #### **模板三：中型Web应用或库**
@@ -171,7 +171,7 @@ cookiecutter gh:wanderer99176/code-template -d wanderer99176-py-template-02-smal
 用于构建包含CI/CD和Docker的標準Web应用。
 
 ```bash
-cookiecutter gh:wanderer99176/code-template -d wanderer99176-py-template-03-medium
+cookiecutter gh:wanderer99176/code-template --directory wanderer99176-py-template-03-medium
 ```
 
 #### **模板五：大型、长期维护的项目**
@@ -179,7 +179,7 @@ cookiecutter gh:wanderer99176/code-template -d wanderer99176-py-template-03-medi
 用于启动复杂的、企业级的应用程序。
 
 ```bash
-cookiecutter gh:wanderer99176/code-template -d wanderer99176-py-template-05-enterprise
+cookiecutter gh:wanderer99176/code-template --directory wanderer99176-py-template-05-enterprise
 ```
 
 接下来，只需根据终端的提示回答几个关于您新项目的问题，一个结构完整、配置齐全的项目目录就会被自动创建。

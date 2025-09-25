@@ -1,43 +1,70 @@
 # {{ cookiecutter.project_name }}
 
-[![PyPI Version](https://img.shields.io/pypi/v/{{ cookiecutter.project_slug }})](https://pypi.org/project/{{ cookiecutter.project_slug }}/)
-[![Build Status](https://github.com/{{ cookiecutter.github_username }}/{{ cookiecutter.project_slug }}/actions/workflows/ci.yml/badge.svg)](https://github.com/{{ cookiecutter.github_username }}/{{ cookiecutter.project_slug }}/actions/workflows/ci.yml)
-[![License](https://img.shields.io/badge/License-{{ cookiecutter.license }}-blue.svg)](https://opensource.org/licenses/{{ cookiecutter.license }})
-
 {{ cookiecutter.project_short_description }}
 
-## ✨ Features
+## 🚀 Quick Start
 
-- Feature 1
-- Feature 2
-- Feature 3
+This is a minimal viable product (MVP) template designed for rapid prototyping and idea validation.
 
-## 🚀 Installation
+### Prerequisites
+
+- Python {{ cookiecutter.python_version }} or higher
+- pip or uv package manager
+
+### Installation
+
+1. Clone or download this project
+2. Create a virtual environment:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+3. Install dependencies:
+   ```bash
+   pip install -e .
+   ```
+
+### Usage
+
+Run the main script directly:
 
 ```bash
-pip install {{ cookiecutter.project_slug }}
+python {{ cookiecutter.package_name }}.py
 ```
 
-## Usage
-
-To use `{{ cookiecutter.project_name }}`, follow these steps:
+Or import and use in your own code:
 
 ```python
-from {{ cookiecutter.package_name }} import your_main_function
+import {{ cookiecutter.package_name }}
 
 # Your code here
 ```
 
-Or run the command line tool:
+## 📁 Project Structure
 
-```bash
-run-app --help
+```
+{{ cookiecutter.project_slug }}/
+├── .gitignore
+├── {{ cookiecutter.package_name }}.py    # Main script file
+├── pyproject.toml                        # Project configuration
+└── README.md                            # This file
 ```
 
-## 🤝 Contributing
+## 🛠️ Development
 
-Contributions are welcome! Please read the [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
+This MVP template uses a flat layout structure for maximum simplicity:
+
+- **Main script**: `{{ cookiecutter.package_name }}.py` - Start coding here!
+- **Dependencies**: Defined in `pyproject.toml`
+- **No complex structure** - Just start writing your code!
+
+## 📝 Next Steps
+
+1. Edit `{{ cookiecutter.package_name }}.py` to implement your idea
+2. Add dependencies to `pyproject.toml` as needed
+3. Test your script: `python {{ cookiecutter.package_name }}.py`
+4. Iterate and refine your MVP
 
 ## 📜 License
 
-This project is licensed under the {{ cookiecutter.license }} License - see the [LICENSE](LICENSE) file for details.
+This project is open source and available under the [MIT License](LICENSE).
