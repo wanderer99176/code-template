@@ -1,0 +1,47 @@
+# justfile - A modern, cross-platform command runner.
+
+# 设置默认Python版本，方便脚本调用
+python_version := "{{ cookiecutter.python_version }}"
+
+# 默认任务，输入`just`时执行
+default:
+    @echo "Available commands:"
+    @just --list
+
+# 安装所有依赖
+install:
+    @echo ">>> Creating venv and syncing dependencies..."
+    uv venv --python {{ '{{' }} python_version {{ '}}' }}
+    uv pip sync pyproject.toml --extra dev
+    @echo "✅ Done."
+
+# 运行代码检查
+lint:
+    @echo ">>> Running linter..."
+    uv run ruff check .
+
+# 自动格式化代码
+format:
+    @echo ">>> Formatting code..."
+    uv run ruff format .
+
+# 运行测试
+test:
+    @echo ">>> Running tests..."
+    uv run pytest
+
+# 启动应用
+run:
+    @echo ">>> Starting the application..."
+    uv run run-app
+
+# 构建可分发的包
+build:
+    @echo ">>> Building package..."
+    uv run python -m build
+
+# 清理临时文件
+clean:
+    @echo ">>> Cleaning up..."
+    rm -rf .venv dist build *.egg-info .pytest_cache .coverage
+    find . -type d -name "__pycache__" -exec rm -r {} +

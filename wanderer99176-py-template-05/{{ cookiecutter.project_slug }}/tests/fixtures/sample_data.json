@@ -1,0 +1,28 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "John Doe",
+      "email": "john@example.com"
+    },
+    {
+      "id": 2,
+      "name": "Jane Smith",
+      "email": "jane@example.com"
+    }
+  ],
+  "tasks": [
+    {
+      "id": 1,
+      "title": "Sample Task 1",
+      "description": "First sample task",
+      "completed": false
+    },
+    {
+      "id": 2,
+      "title": "Sample Task 2",
+      "description": "Second sample task",
+      "completed": true
+    }
+  ]
+}
