@@ -1,0 +1,163 @@
+# ==============================================================================
+# Build system configuration
+# ==============================================================================
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+# ==============================================================================
+# Project metadata (PEP 621)
+# ==============================================================================
+[project]
+name = "{{ cookiecutter.project_name }}"
+version = "{{ cookiecutter.first_version }}"
+description = "{{ cookiecutter.project_short_description }}"
+readme = "README.md"
+authors = [
+    { name = "{{ cookiecutter.author_name }}", email = "{{ cookiecutter.author_email }}" },
+]
+license = { text = "{{ cookiecutter.license }}" }
+requires-python = ">={{ cookiecutter.python_version }}"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License", # Adjust based on license choice
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+]
+
+# --- Production Dependencies ---
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "pydantic",
+    "pydantic-settings",
+]
+
+[project.urls]
+Repository = "https://github.com/{{ cookiecutter.github_username }}/{{ cookiecutter.project_slug }}"
+
+# --- Optional Dependencies ---
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "httpx",      # For testing FastAPI
+    "ruff",       # Linter and formatter
+    "pre-commit",
+    "build",
+    "twine",
+]
+
+# --- Command-line entry points ---
+[project.scripts]
+run-dev = "{{ cookiecutter.package_name }}.main:run_dev_server"
+
+# ==============================================================================
+# Tool Configurations
+# ==============================================================================
+
+# --- Setuptools configuration (for src-layout) ---
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = ["{{ cookiecutter.package_name }}"]
+
+
+# --- Ruff Linter and Formatter configuration ---
+[tool.ruff]
+line-length = 88
+target-version = "py{{ cookiecutter.python_version.replace('.', '') }}"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+# --- Pytest configuration ---
+[tool.pytest.ini_options]
+minversion = "6.0"
+testpaths = [
+    "tests",
+]
+addopts = "-q"# ==============================================================================
+# Build system configuration
+# ==============================================================================
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+# ==============================================================================
+# Project metadata (PEP 621)
+# ==============================================================================
+[project]
+name = "{{ cookiecutter.project_name }}"
+version = "{{ cookiecutter.first_version }}"
+description = "{{ cookiecutter.project_short_description }}"
+readme = "README.md"
+authors = [
+    { name = "{{ cookiecutter.author_name }}", email = "{{ cookiecutter.author_email }}" },
+]
+license = { text = "{{ cookiecutter.license }}" }
+requires-python = ">={{ cookiecutter.python_version }}"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License", # Adjust based on license choice
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+]
+
+# --- Production Dependencies ---
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "pydantic",
+    "pydantic-settings",
+]
+
+[project.urls]
+Repository = "https://github.com/{{ cookiecutter.github_username }}/{{ cookiecutter.project_slug }}"
+
+# --- Optional Dependencies ---
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "httpx",      # For testing FastAPI
+    "ruff",       # Linter and formatter
+    "pre-commit",
+    "build",
+    "twine",
+]
+
+# --- Command-line entry points ---
+[project.scripts]
+run-dev = "{{ cookiecutter.package_name }}.main:run_dev_server"
+
+# ==============================================================================
+# Tool Configurations
+# ==============================================================================
+
+# --- Setuptools configuration (for src-layout) ---
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = ["{{ cookiecutter.package_name }}"]
+
+
+# --- Ruff Linter and Formatter configuration ---
+[tool.ruff]
+line-length = 88
+target-version = "py{{ cookiecutter.python_version.replace('.', '') }}"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+# --- Pytest configuration ---
+[tool.pytest.ini_options]
+minversion = "6.0"
+testpaths = [
+    "tests",
+]
+addopts = "-q"
