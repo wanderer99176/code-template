@@ -26,13 +26,13 @@ pip install -e .
 
 ```bash
 # Show help
-{{ cookiecutter.package_name }} --help
+{{ cookiecutter.project_slug }} --help
 
 # Show version
-{{ cookiecutter.package_name }} --version
+{{ cookiecutter.project_slug }} --version
 
 # Run a command
-{{ cookiecutter.package_name }} hello --name "World"
+{{ cookiecutter.project_slug }} hello --name "World"
 ```
 
 ### As a Python Library

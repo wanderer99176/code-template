@@ -10,7 +10,7 @@ build-backend = "setuptools.build_meta"
 # ==============================================================================
 [project]
 name = "{{ cookiecutter.project_name }}"
-version = "0.1.0"
+version = "{{ cookiecutter.first_version }}"
 description = "{{ cookiecutter.project_short_description }}"
 authors = [
     { name = "{{ cookiecutter.author_name }}" },
