@@ -22,5 +22,7 @@ jobs:
     - name: Publish to PyPI
       env:
         TWINE_USERNAME: __token__
+        {% raw %}
         TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        {% endraw %}
       run: twine upload dist/*
