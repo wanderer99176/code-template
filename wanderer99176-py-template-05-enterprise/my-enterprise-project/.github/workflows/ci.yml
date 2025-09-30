@@ -1,0 +1,89 @@
+# .github/workflows/ci.yml
+
+name: CI & Lint
+
+# --------------------------------------------------------------------------
+# 触发器 (Triggers)
+# --------------------------------------------------------------------------
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+# --------------------------------------------------------------------------
+# 安全性与效率配置 (Security & Efficiency)
+# --------------------------------------------------------------------------
+permissions:
+  contents: read # 为工作流提供只读权限，提升安全性
+
+concurrency:
+  
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  
+  cancel-in-progress: true # 自动取消同一PR上旧的、正在运行的工作流
+
+# --------------------------------------------------------------------------
+# 作业 (Jobs)
+# --------------------------------------------------------------------------
+jobs:
+  test-and-lint:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false # 即使一个python版本失败，其他版本的测试也会继续运行
+      matrix:
+        python-version: ["3.11", "3.10", "3.9"]
+
+    steps:
+      # 步骤 1: 检出代码
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 步骤 2: 设置 Python 环境
+      
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      
+
+      # 步骤 3: 安装 uv
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+      # 步骤 4: 缓存 uv 的全局依赖，提升速度
+      - name: Cache uv dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/uv
+          
+          key: ${{ runner.os }}-uv-${{ hashFiles('**/pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-uv-
+          
+
+      # 步骤 5: 编译锁定文件并安装依赖 (确保确定性)
+      - name: Compile and Sync Dependencies
+        run: |
+          uv pip compile pyproject.toml --extra dev -o requirements.lock
+          uv pip sync requirements.lock
+
+      # 步骤 6: 运行 Linter 和 Formatter
+      - name: Lint and Format Check
+        run: |
+          uv run ruff check .
+          uv run ruff format . --check
+
+      # 步骤 7: 运行测试并生成覆盖率报告
+      - name: Run Tests with Coverage
+        run: uv run pytest --cov=my_enterprise_project --cov-report=xml
+
+      # 步骤 8: (新增) 上传覆盖率报告作为构建产物
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          
+          name: coverage-report-${{ matrix.python-version }}
+          
+          path: coverage.xml
+          if-no-files-found: error
