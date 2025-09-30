@@ -1,4 +1,4 @@
-"""Tests for main CLI functionality."""
+"""主 CLI 功能测试。"""
 
 import pytest
 from click.testing import CliRunner
@@ -7,7 +7,7 @@ from {{ cookiecutter.package_name }}.main import cli
 
 
 def test_cli_help():
-    """Test CLI help command."""
+    """测试 CLI 帮助命令。"""
     runner = CliRunner()
     result = runner.invoke(cli, ["--help"])
     assert result.exit_code == 0
@@ -15,7 +15,7 @@ def test_cli_help():
 
 
 def test_cli_version():
-    """Test CLI version command."""
+    """测试 CLI 版本命令。"""
     runner = CliRunner()
     result = runner.invoke(cli, ["--version"])
     assert result.exit_code == 0
@@ -23,7 +23,7 @@ def test_cli_version():
 
 
 def test_cli_hello():
-    """Test CLI hello command."""
+    """测试 CLI hello 命令。"""
     runner = CliRunner()
     result = runner.invoke(cli, ["hello", "--name", "World"])
     assert result.exit_code == 0

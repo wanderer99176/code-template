@@ -1,4 +1,4 @@
-"""Main application entry point for {{ cookiecutter.project_name }}."""
+"""{{ cookiecutter.project_name }} 的主应用程序入口点。"""
 
 import uvicorn
 from fastapi import FastAPI
@@ -7,7 +7,7 @@ from {{ cookiecutter.package_name }}.core import get_app
 
 
 def run_dev_server(host: str = "0.0.0.0", port: int = 8000, reload: bool = True) -> None:
-    """Run the development server."""
+    """运行开发服务器。"""
     app = get_app()
     uvicorn.run(app, host=host, port=port, reload=reload)
 

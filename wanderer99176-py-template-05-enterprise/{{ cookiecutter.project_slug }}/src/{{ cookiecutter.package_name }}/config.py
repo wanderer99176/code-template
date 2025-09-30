@@ -2,10 +2,10 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    """Loads and validates application settings."""
+    """加载并验证应用程序设置。"""
     DATABASE_URL: str = "sqlite:///./test.db"
     
-    # Load settings from a .env file
+    # 从 .env 文件加载设置
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
 

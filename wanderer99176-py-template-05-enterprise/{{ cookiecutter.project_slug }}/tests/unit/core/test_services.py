@@ -3,10 +3,10 @@ from {{ cookiecutter.package_name }}.core.services import UserService, TaskServi
 
 
 class TestUserService:
-    """Test UserService."""
+    """测试 UserService。"""
     
     def test_get_user(self):
-        """Test getting a user by ID."""
+        """测试根据ID获取用户。"""
         service = UserService()
         user = service.get_user(1)
         assert user.id == 1
@@ -14,7 +14,7 @@ class TestUserService:
         assert user.email == "john@example.com"
     
     def test_get_users(self):
-        """Test getting all users."""
+        """测试获取所有用户。"""
         service = UserService()
         users = service.get_users()
         assert len(users) == 2
@@ -23,10 +23,10 @@ class TestUserService:
 
 
 class TestTaskService:
-    """Test TaskService."""
+    """测试 TaskService。"""
     
     def test_get_task(self):
-        """Test getting a task by ID."""
+        """测试根据ID获取任务。"""
         service = TaskService()
         task = service.get_task(1)
         assert task.id == 1
@@ -34,7 +34,7 @@ class TestTaskService:
         assert task.description == "A sample task"
     
     def test_get_tasks(self):
-        """Test getting all tasks."""
+        """测试获取所有任务。"""
         service = TaskService()
         tasks = service.get_tasks()
         assert len(tasks) == 2

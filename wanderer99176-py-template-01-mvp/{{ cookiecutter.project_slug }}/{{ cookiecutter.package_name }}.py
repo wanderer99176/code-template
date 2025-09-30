@@ -2,18 +2,18 @@
 """
 {{ cookiecutter.project_name }} - {{ cookiecutter.project_short_description }}
 
-This is your main script file. Start coding here!
+这是你的主脚本文件。在这里开始编码！
 """
 
 import requests
 
 
 def main():
-    """Main function - your script entry point."""
+    """主函数 - 脚本入口点。"""
     print("Hello from {{ cookiecutter.project_name }}!")
-    print("This is your MVP script. Start coding here!")
+    print("这是你的MVP脚本。在这里开始编码！")
     
-    # Example: Make a simple HTTP request
+    # 示例：发起一个简单的HTTP请求
     try:
         response = requests.get("https://httpbin.org/json")
         if response.status_code == 200:

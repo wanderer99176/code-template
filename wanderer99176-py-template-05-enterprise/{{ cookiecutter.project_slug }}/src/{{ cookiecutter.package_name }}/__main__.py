@@ -13,7 +13,7 @@ def read_root():
 
 
 def main():
-    """Entrypoint for the `run-app` script."""
+    """`run-app` 脚本的入口点。"""
     uvicorn.run("{{ cookiecutter.package_name }}.__main__:app", host="0.0.0.0", port=8000, reload=True)
 
 

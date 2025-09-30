@@ -18,7 +18,9 @@ permissions:
   contents: read # 为工作流提供只读权限，提升安全性
 
 concurrency:
+  {% raw %}
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  {% endraw %}
   cancel-in-progress: true # 自动取消同一PR上旧的、正在运行的工作流
 
 # --------------------------------------------------------------------------
@@ -82,6 +84,8 @@ jobs:
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:
+          {% raw %}
           name: coverage-report-${{ matrix.python-version }}
+          {% endraw %}
           path: coverage.xml
           if-no-files-found: error

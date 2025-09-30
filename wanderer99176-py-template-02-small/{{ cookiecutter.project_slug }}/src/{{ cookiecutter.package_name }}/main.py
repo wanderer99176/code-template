@@ -1,4 +1,4 @@
-"""Main CLI entry point for {{ cookiecutter.project_name }}."""
+"""{{ cookiecutter.project_name }} 的主 CLI 入口点。"""
 
 import click
 
@@ -11,9 +11,9 @@ def cli():
 
 
 @cli.command()
-@click.option("--name", default="World", help="Name to greet")
+@click.option("--name", default="World", help="要问候的名字")
 def hello(name: str):
-    """Say hello to someone."""
+    """向某人问好。"""
     click.echo(f"Hello, {name}!")
 
 

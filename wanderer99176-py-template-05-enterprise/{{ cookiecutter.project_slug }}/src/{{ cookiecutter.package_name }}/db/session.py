@@ -7,7 +7,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
 def get_db():
-    """Dependency to get a DB session."""
+    """获取数据库会话的依赖项。"""
     db = SessionLocal()
     try:
         yield db

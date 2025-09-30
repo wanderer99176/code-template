@@ -1,4 +1,4 @@
-"""Database ORM models."""
+"""数据库 ORM 模型。"""
 
 from sqlalchemy import Column, Integer, String, Boolean, DateTime
 from sqlalchemy.ext.declarative import declarative_base
@@ -8,7 +8,7 @@ Base = declarative_base()
 
 
 class User(Base):
-    """User database model."""
+    """用户数据库模型。"""
     __tablename__ = "users"
     
     id = Column(Integer, primary_key=True, index=True)
@@ -18,7 +18,7 @@ class User(Base):
 
 
 class Task(Base):
-    """Task database model."""
+    """任务数据库模型。"""
     __tablename__ = "tasks"
     
     id = Column(Integer, primary_key=True, index=True)

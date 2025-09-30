@@ -5,6 +5,6 @@ from {{ cookiecutter.package_name }}.__main__ import app
 
 @pytest.fixture(scope="module")
 def client():
-    """Yield a TestClient for the FastAPI app."""
+    """为 FastAPI 应用生成测试客户端。"""
     with TestClient(app) as c:
         yield c

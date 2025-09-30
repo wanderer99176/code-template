@@ -1,4 +1,4 @@
-"""Tests for core application logic."""
+"""核心应用程序逻辑测试。"""
 
 import pytest
 from fastapi.testclient import TestClient
@@ -8,13 +8,13 @@ from {{ cookiecutter.package_name }}.core import get_app
 
 @pytest.fixture
 def client():
-    """Create a test client."""
+    """创建测试客户端。"""
     app = get_app()
     return TestClient(app)
 
 
 def test_root_endpoint(client):
-    """Test the root endpoint."""
+    """测试根端点。"""
     response = client.get("/")
     assert response.status_code == 200
     data = response.json()
@@ -23,7 +23,7 @@ def test_root_endpoint(client):
 
 
 def test_health_endpoint(client):
-    """Test the health check endpoint."""
+    """测试健康检查端点。"""
     response = client.get("/health")
     assert response.status_code == 200
     data = response.json()
