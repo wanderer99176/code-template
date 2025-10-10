@@ -30,7 +30,7 @@ jobs:
       - name: 🐍 设置 Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          python-version: {% raw %}${{ env.PYTHON_VERSION }}{% endraw %}
 
       - name: 📦 安装 uv
         uses: astral-sh/setup-uv@v2
@@ -56,7 +56,7 @@ jobs:
       - name: 🟢 设置 Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: {% raw %}${{ env.NODE_VERSION }}{% endraw %}
           cache: 'pnpm'
 
       - name: 📦 安装依赖
@@ -109,7 +109,7 @@ jobs:
       - name: 🐍 设置 Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          python-version: {% raw %}${{ env.PYTHON_VERSION }}{% endraw %}
 
       - name: 📦 安装 uv
         uses: astral-sh/setup-uv@v2
@@ -153,7 +153,7 @@ jobs:
       - name: 🟢 设置 Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: {% raw %}${{ env.NODE_VERSION }}{% endraw %}
           cache: 'pnpm'
 
       - name: 📦 安装依赖
@@ -186,7 +186,7 @@ jobs:
       - name: 🟢 设置 Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: {% raw %}${{ env.NODE_VERSION }}{% endraw %}
           cache: 'pnpm'
 
       - name: 📦 安装依赖
@@ -241,7 +241,7 @@ jobs:
     name: 🐳 Build Backend Image
     runs-on: ubuntu-latest
     needs: [lint-python, test-backend, security-scan]
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+    if: {% raw %}github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'){% endraw %}
     steps:
       - name: 📥 检出代码
         uses: actions/checkout@v4
@@ -252,34 +252,34 @@ jobs:
       - name: 🔑 登录容器镜像仓库
         uses: docker/login-action@v3
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: {% raw %}${{ env.REGISTRY }}{% endraw %}
+          username: {% raw %}${{ github.actor }}{% endraw %}
+          password: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
 
       - name: 🏷️ 提取元数据
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-backend
+          images: {% raw %}${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}{% endraw %}-backend
           tags: |
             type=ref,event=branch
-            type=sha,prefix={{branch}}-
-            type=raw,value=latest,enable={{is_default_branch}}
+            type=sha,prefix={% raw %}{{branch}}{% endraw %}-
+            type=raw,value=latest,enable={% raw %}{{is_default_branch}}{% endraw %}
 
       - name: 🐳 构建并推送镜像
         uses: docker/build-push-action@v5
         with:
           context: ./services/backend
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: {% raw %}${{ steps.meta.outputs.tags }}{% endraw %}
+          labels: {% raw %}${{ steps.meta.outputs.labels }}{% endraw %}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - name: 🔍 扫描 Docker 镜像
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-backend:${{ github.sha }}
+          image-ref: {% raw %}${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-backend:${{ github.sha }}{% endraw %}
           format: 'sarif'
           output: 'trivy-image-results.sarif'
 
@@ -293,7 +293,7 @@ jobs:
     name: 🐳 Build Frontend Image
     runs-on: ubuntu-latest
     needs: [lint-frontend, test-frontend, security-scan]
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+    if: {% raw %}github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'){% endraw %}
     steps:
       - name: 📥 检出代码
         uses: actions/checkout@v4
@@ -304,27 +304,27 @@ jobs:
       - name: 🔑 登录容器镜像仓库
         uses: docker/login-action@v3
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: {% raw %}${{ env.REGISTRY }}{% endraw %}
+          username: {% raw %}${{ github.actor }}{% endraw %}
+          password: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
 
       - name: 🏷️ 提取元数据
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-frontend
+          images: {% raw %}${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}{% endraw %}-frontend
           tags: |
             type=ref,event=branch
-            type=sha,prefix={{branch}}-
-            type=raw,value=latest,enable={{is_default_branch}}
+            type=sha,prefix={% raw %}{{branch}}{% endraw %}-
+            type=raw,value=latest,enable={% raw %}{{is_default_branch}}{% endraw %}
 
       - name: 🐳 构建并推送镜像
         uses: docker/build-push-action@v5
         with:
           context: ./services/frontend
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: {% raw %}${{ steps.meta.outputs.tags }}{% endraw %}
+          labels: {% raw %}${{ steps.meta.outputs.labels }}{% endraw %}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -334,7 +334,7 @@ jobs:
     name: 🐳 Build ML API Image
     runs-on: ubuntu-latest
     needs: [lint-python, security-scan]
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+    if: {% raw %}github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'){% endraw %}
     steps:
       - name: 📥 检出代码
         uses: actions/checkout@v4
@@ -345,27 +345,27 @@ jobs:
       - name: 🔑 登录容器镜像仓库
         uses: docker/login-action@v3
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: {% raw %}${{ env.REGISTRY }}{% endraw %}
+          username: {% raw %}${{ github.actor }}{% endraw %}
+          password: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
 
       - name: 🏷️ 提取元数据
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-ml-api
+          images: {% raw %}${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}{% endraw %}-ml-api
           tags: |
             type=ref,event=branch
-            type=sha,prefix={{branch}}-
-            type=raw,value=latest,enable={{is_default_branch}}
+            type=sha,prefix={% raw %}{{branch}}{% endraw %}-
+            type=raw,value=latest,enable={% raw %}{{is_default_branch}}{% endraw %}
 
       - name: 🐳 构建并推送镜像
         uses: docker/build-push-action@v5
         with:
           context: ./services/ml-api
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: {% raw %}${{ steps.meta.outputs.tags }}{% endraw %}
+          labels: {% raw %}${{ steps.meta.outputs.labels }}{% endraw %}
           cache-from: type=gha
           cache-to: type=gha,mode=max
   {% endif -%}
@@ -377,7 +377,7 @@ jobs:
     name: 🚀 Deploy to Kubernetes
     runs-on: ubuntu-latest
     needs: [build-backend, build-frontend{% if cookiecutter.enable_ml_api == 'yes' %}, build-ml-api{% endif %}]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: {% raw %}github.event_name == 'push' && github.ref == 'refs/heads/main'{% endraw %}
     environment:
       name: production
       url: https://{{ cookiecutter.domain_name }}
@@ -390,7 +390,7 @@ jobs:
 
       - name: 🔑 配置 Kubernetes 凭证
         run: |
-          echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > $HOME/.kube/config
+          echo "{% raw %}${{ secrets.KUBE_CONFIG }}{% endraw %}" | base64 -d > $HOME/.kube/config
 
       - name: 🎯 设置 Helm
         uses: azure/setup-helm@v3
@@ -402,14 +402,14 @@ jobs:
           helm upgrade --install backend ./infra/kubernetes/helm-charts/backend \
             --namespace {{ cookiecutter.kubernetes_namespace }} \
             --create-namespace \
-            --set image.tag=${{ github.sha }} \
+            --set image.tag={% raw %}${{ github.sha }}{% endraw %} \
             --wait
 
       - name: 🚀 部署前端
         run: |
           helm upgrade --install frontend ./infra/kubernetes/helm-charts/frontend \
             --namespace {{ cookiecutter.kubernetes_namespace }} \
-            --set image.tag=${{ github.sha }} \
+            --set image.tag={% raw %}${{ github.sha }}{% endraw %} \
             --wait
 
       {% if cookiecutter.enable_ml_api == 'yes' -%}
@@ -417,7 +417,7 @@ jobs:
         run: |
           helm upgrade --install ml-api ./infra/kubernetes/helm-charts/ml-api \
             --namespace {{ cookiecutter.kubernetes_namespace }} \
-            --set image.tag=${{ github.sha }} \
+            --set image.tag={% raw %}${{ github.sha }}{% endraw %} \
             --wait
       {% endif -%}
 
@@ -438,12 +438,11 @@ jobs:
       - name: 📢 发送通知
         uses: 8398a7/action-slack@v3
         with:
-          status: ${{ job.status }}
+          status: {% raw %}${{ job.status }}{% endraw %}
           text: |
-            部署状态: ${{ job.status }}
-            提交: ${{ github.sha }}
-            作者: ${{ github.actor }}
-            分支: ${{ github.ref }}
-          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+            部署状态: {% raw %}${{ job.status }}{% endraw %}
+            提交: {% raw %}${{ github.sha }}{% endraw %}
+            作者: {% raw %}${{ github.actor }}{% endraw %}
+            分支: {% raw %}${{ github.ref }}{% endraw %}
+          webhook_url: {% raw %}${{ secrets.SLACK_WEBHOOK }}{% endraw %}
         if: always()
-
