@@ -1,4 +1,4 @@
-<template>
+{% raw %}<template>
   <div>
     <!-- 导航栏 -->
     <UContainer>
@@ -35,8 +35,8 @@ const config = useRuntimeConfig()
 useHead({
   title: config.public.siteName as string,
   meta: [
-    { name: 'description', content: '{{ cookiecutter.description }}' },
+    { name: 'description', content: '{% endraw %}{{ cookiecutter.description }}{% raw %}' },
   ],
 })
 </script>
-
+{% endraw %}

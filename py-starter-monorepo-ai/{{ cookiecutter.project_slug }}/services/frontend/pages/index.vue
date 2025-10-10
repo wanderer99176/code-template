@@ -1,4 +1,4 @@
-<template>
+{% raw %}<template>
   <UContainer>
     <div class="py-20">
       <!-- Hero Section -->
@@ -52,7 +52,7 @@ definePageMeta({
 // 运行时配置
 const config = useRuntimeConfig()
 const siteName = config.public.siteName
-const description = '{{ cookiecutter.description }}'
+const description = '{% endraw %}{{ cookiecutter.description }}{% raw %}'
 
 // 功能列表
 const features = [
@@ -96,4 +96,4 @@ const stats = [
   { value: '99.9%', label: '可用性' },
 ]
 </script>
-
+{% endraw %}
