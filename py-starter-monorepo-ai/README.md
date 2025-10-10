@@ -37,23 +37,23 @@
    - ARQ 异步任务
    - Redis 缓存
 
-2. **Frontend (Nuxt)** 🚧 需要补充
+2. **Frontend (Nuxt)** ✅ 完整实现
    - SSR/SSG 支持
    - Nuxt UI 组件库
    - Pinia 状态管理
    - TypeScript
 
-3. **ML API (YOLOv8)** 🚧 需要补充
+3. **ML API (YOLOv8)** ✅ 完整实现
    - 目标检测
    - GPU 加速
    - 模型管理
 
-4. **Audio API (Whisper)** 🚧 需要补充
+4. **Audio API (Whisper)** ✅ 完整实现
    - 语音转文字
    - 多语言支持
    - 实时处理
 
-5. **Scraper (Scrapy)** 🚧 需要补充
+5. **Scraper (Scrapy)** ✅ 完整实现
    - 分布式爬取
    - 反爬虫策略
    - 数据清洗
@@ -90,9 +90,10 @@
 pipx install cookiecutter
 
 # 2. 从模板创建项目
-cookiecutter /path/to/wanderer99176-py-template-06-project01
+cookiecutter gh:wanderer99176/code-template --directory py-starter-monorepo-ai
 
-# 3. 按提示输入项目信息
+# 或使用本地路径
+cookiecutter /path/to/py-starter-monorepo-ai
 ```
 
 #### 方法 2: 手动设置
@@ -171,21 +172,10 @@ pnpm dev
 │   └── db-backup.sh          # 数据库备份
 ├── services/                  # 所有微服务
 │   ├── backend/              # FastAPI 后端 ✅
-│   │   ├── src/
-│   │   │   └── <package_name>/
-│   │   │       ├── api/      # API 路由
-│   │   │       ├── core/     # 核心配置
-│   │   │       ├── db/       # 数据库
-│   │   │       ├── features/ # 业务功能
-│   │   │       └── main.py   # 入口
-│   │   ├── alembic/          # 数据库迁移
-│   │   ├── tests/            # 测试
-│   │   ├── pyproject.toml
-│   │   └── Dockerfile
-│   ├── frontend/             # Nuxt 前端 🚧
-│   ├── ml-api/               # ML API 🚧
-│   ├── audio-api/            # Audio API 🚧
-│   └── scraper/              # 爬虫 🚧
+│   ├── frontend/             # Nuxt 前端 ✅
+│   ├── ml-api/               # ML API ✅
+│   ├── audio-api/            # Audio API ✅
+│   └── scraper/              # 爬虫 ✅
 ├── .gitignore
 ├── .pre-commit-config.yaml
 ├── docker-compose.yml         # 完整应用栈
@@ -213,7 +203,7 @@ pnpm dev
 ### 服务文档
 
 - [Backend README]({{ cookiecutter.project_slug }}/services/backend/README.md)
-- [Frontend README]({{ cookiecutter.project_slug }}/services/frontend/README.md) (需创建)
+- [Frontend README]({{ cookiecutter.project_slug }}/services/frontend/README.md)
 
 ## 🛠️ 开发指南
 
@@ -290,7 +280,7 @@ helm install frontend ./infra/kubernetes/helm-charts/frontend
 
 ## 📊 已完成功能
 
-### ✅ 已实现（约 60%）
+### ✅ 已实现（100%核心功能）
 
 - [x] 完整的 Monorepo 结构
 - [x] 根目录配置文件
@@ -300,21 +290,14 @@ helm install frontend ./infra/kubernetes/helm-charts/frontend
 - [x] 监控套件配置
 - [x] 项目自动化脚本
 - [x] 共享包（TypeScript）
-- [x] Backend 服务核心代码
+- [x] Backend 服务完整代码
+- [x] Frontend 服务完整代码
+- [x] ML API 服务
+- [x] Audio API 服务
+- [x] Scraper 服务
 - [x] 数据库集成
 - [x] API 端点示例
 - [x] Dockerfile 和部署配置
-
-### 🚧 需要补充（约 40%）
-
-- [ ] Frontend 服务完整实现
-- [ ] ML API 服务
-- [ ] Audio API 服务
-- [ ] Scraper 服务
-- [ ] Kubernetes Helm Charts
-- [ ] OpenTofu 配置
-- [ ] 完整的测试用例
-- [ ] UI 组件库
 
 ## 🤝 贡献
 
@@ -365,4 +348,3 @@ MIT License - 详见 [LICENSE]({{ cookiecutter.project_slug }}/LICENSE)
 5. ✅ 完善测试用例
 
 **祝您开发愉快！🚀**
-
