@@ -2,7 +2,7 @@
 
 # 代码生成脚本
 # 从 FastAPI 后端生成 OpenAPI 规范并转换为 TypeScript 类型
-
+{% raw %}
 set -e
 
 # 颜色定义
@@ -25,7 +25,7 @@ cd services/backend
 source .venv/bin/activate
 
 # 在后台启动服务器
-uvicorn {{ cookiecutter.package_name }}.main:app --host 0.0.0.0 --port 8000 &
+{% endraw %}uvicorn {{ cookiecutter.package_name }}.main:app --host 0.0.0.0 --port 8000 &{% raw %}
 SERVER_PID=$!
 
 # 等待服务器启动
@@ -76,4 +76,5 @@ echo "生成的文件:"
 echo "  - packages/shared-types/openapi.json"
 echo "  - packages/shared-types/types.ts"
 echo ""
+{% endraw %}
 

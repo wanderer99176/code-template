@@ -5,7 +5,7 @@
     "author_name": "Your Name",
     "author_email": "you@example.com",
     "project_short_description": "A modern and professional Python project.",
-    "python_version": "3.11",
+    "python_version": "3.11.9",
     "first_version": "0.1.0",
     "license": ["MIT", "Apache-2.0", "GPL-3.0", "BSD-3-Clause", "None"],
     "github_username": "your_github_username"

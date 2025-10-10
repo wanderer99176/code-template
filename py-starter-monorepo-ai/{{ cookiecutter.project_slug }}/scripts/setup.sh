@@ -2,7 +2,7 @@
 
 # {{ cookiecutter.project_name }} 项目初始化脚本
 # 此脚本自动执行项目设置的所有步骤
-
+{% raw %}
 set -e  # 遇到错误立即退出
 
 # 颜色定义
@@ -336,4 +336,5 @@ main() {
 
 # 运行主函数
 main
+{% endraw %}
 

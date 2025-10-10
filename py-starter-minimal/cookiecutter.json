@@ -4,6 +4,6 @@
     "package_name": "{{ cookiecutter.project_slug.replace('-', '_') }}",
     "author_name": "Your Name",
     "project_short_description": "A quick MVP script for prototyping an idea.",
-    "python_version": "3.11",
+    "python_version": "3.11.9",
     "first_version": "0.1.0"
 }

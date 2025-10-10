@@ -2,7 +2,7 @@
 
 # 数据库备份脚本
 # 自动备份 PostgreSQL 数据库并上传到 S3
-
+{% raw %}
 set -e
 
 # 配置
@@ -112,4 +112,5 @@ if [ -n "$S3_BUCKET" ]; then
 fi
 
 echo ""
+{% endraw %}
 
