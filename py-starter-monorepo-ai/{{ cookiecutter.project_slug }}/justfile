@@ -43,12 +43,12 @@ docker-build:
 
 # 构建并推送镜像到仓库
 docker-push registry="{{ cookiecutter.docker_registry }}/{{ cookiecutter.github_username }}":
-    @echo "📤 推送镜像到 {{ registry }}..."
+    @echo "📤 推送镜像到 {% raw %}{{ registry }}{% endraw %}..."
     docker-compose build
-    docker tag {{ cookiecutter.project_slug }}-backend:latest {{ registry }}/{{ cookiecutter.project_slug }}-backend:latest
-    docker tag {{ cookiecutter.project_slug }}-frontend:latest {{ registry }}/{{ cookiecutter.project_slug }}-frontend:latest
-    docker push {{ registry }}/{{ cookiecutter.project_slug }}-backend:latest
-    docker push {{ registry }}/{{ cookiecutter.project_slug }}-frontend:latest
+    docker tag {{ cookiecutter.project_slug }}-backend:latest {% raw %}{{ registry }}{% endraw %}/{{ cookiecutter.project_slug }}-backend:latest
+    docker tag {{ cookiecutter.project_slug }}-frontend:latest {% raw %}{{ registry }}{% endraw %}/{{ cookiecutter.project_slug }}-frontend:latest
+    docker push {% raw %}{{ registry }}{% endraw %}/{{ cookiecutter.project_slug }}-backend:latest
+    docker push {% raw %}{{ registry }}{% endraw %}/{{ cookiecutter.project_slug }}-frontend:latest
 
 # === 测试 ===
 
@@ -104,8 +104,8 @@ typecheck:
 
 # 创建数据库迁移
 db-migrate name:
-    @echo "📝 创建数据库迁移: {{ name }}..."
-    cd services/backend && uv run alembic revision --autogenerate -m "{{ name }}"
+    @echo "📝 创建数据库迁移: {% raw %}{{ name }}{% endraw %}..."
+    cd services/backend && uv run alembic revision --autogenerate -m "{% raw %}{{ name }}{% endraw %}"
 
 # 应用数据库迁移
 db-upgrade:
@@ -250,15 +250,15 @@ ci:
 
 # 查看日志
 logs service="":
-    {% raw %}@if [ -z "{{ service }}" ]; then \
+    @if [ -z "{% raw %}{{ service }}{% endraw %}" ]; then \
         docker-compose logs -f; \
     else \
-        docker-compose logs -f {{ service }}; \
-    fi{% endraw %}
+        docker-compose logs -f {% raw %}{{ service }}{% endraw %}; \
+    fi
 
 # 进入容器 shell
 shell service:
-    {% raw %}docker-compose exec {{ service }} sh{% endraw %}
+    docker-compose exec {% raw %}{{ service }}{% endraw %} sh
 
 # 显示项目信息
 info:
