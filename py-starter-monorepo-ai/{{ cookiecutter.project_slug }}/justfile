@@ -1,0 +1,270 @@
+# Justfile - 项目任务运行器
+# 安装 just: https://github.com/casey/just
+# 使用: just <command>
+
+# 默认命令：显示所有可用命令
+default:
+    @just --list
+
+# === 开发环境 ===
+
+# 初始化项目（首次运行）
+init:
+    @echo "🚀 初始化项目..."
+    chmod +x scripts/*.sh
+    ./scripts/setup.sh
+
+# 启动开发环境
+dev:
+    @echo "🔧 启动开发环境..."
+    docker-compose -f infra/docker-compose/dev.yml up -d
+    pnpm install
+    pnpm dev
+
+# 停止开发环境
+dev-down:
+    @echo "🛑 停止开发环境..."
+    docker-compose -f infra/docker-compose/dev.yml down
+
+# === 构建 ===
+
+# 构建所有服务
+build:
+    @echo "📦 构建所有服务..."
+    pnpm build
+    cd services/backend && uv sync
+    cd services/ml-api && uv sync
+    cd services/audio-api && uv sync
+
+# 构建 Docker 镜像
+docker-build:
+    @echo "🐳 构建 Docker 镜像..."
+    docker-compose build
+
+# 构建并推送镜像到仓库
+docker-push registry="{{ cookiecutter.docker_registry }}/{{ cookiecutter.github_username }}":
+    @echo "📤 推送镜像到 {{ registry }}..."
+    docker-compose build
+    docker tag {{ cookiecutter.project_slug }}-backend:latest {{ registry }}/{{ cookiecutter.project_slug }}-backend:latest
+    docker tag {{ cookiecutter.project_slug }}-frontend:latest {{ registry }}/{{ cookiecutter.project_slug }}-frontend:latest
+    docker push {{ registry }}/{{ cookiecutter.project_slug }}-backend:latest
+    docker push {{ registry }}/{{ cookiecutter.project_slug }}-frontend:latest
+
+# === 测试 ===
+
+# 运行所有测试
+test:
+    @echo "🧪 运行所有测试..."
+    pnpm test
+    cd services/backend && uv run pytest
+    cd services/ml-api && uv run pytest
+    cd services/audio-api && uv run pytest
+
+# 运行测试并生成覆盖率报告
+test-cov:
+    @echo "📊 运行测试并生成覆盖率报告..."
+    pnpm test:coverage
+    cd services/backend && uv run pytest --cov
+    cd services/ml-api && uv run pytest --cov
+    cd services/audio-api && uv run pytest --cov
+
+# === 代码质量 ===
+
+# 运行所有 linters
+lint:
+    @echo "🔍 运行 linters..."
+    pnpm lint
+    cd services/backend && uv run ruff check .
+    cd services/ml-api && uv run ruff check .
+    cd services/audio-api && uv run ruff check .
+
+# 自动修复 lint 问题
+lint-fix:
+    @echo "🔧 自动修复 lint 问题..."
+    pnpm lint:fix
+    cd services/backend && uv run ruff check --fix .
+    cd services/ml-api && uv run ruff check --fix .
+    cd services/audio-api && uv run ruff check --fix .
+
+# 格式化代码
+format:
+    @echo "✨ 格式化代码..."
+    pnpm format
+    cd services/backend && uv run ruff format .
+    cd services/ml-api && uv run ruff format .
+    cd services/audio-api && uv run ruff format .
+
+# 类型检查
+typecheck:
+    @echo "🔎 类型检查..."
+    pnpm typecheck
+    cd services/backend && uv run mypy .
+
+# === 数据库 ===
+
+# 创建数据库迁移
+db-migrate name:
+    @echo "📝 创建数据库迁移: {{ name }}..."
+    cd services/backend && uv run alembic revision --autogenerate -m "{{ name }}"
+
+# 应用数据库迁移
+db-upgrade:
+    @echo "⬆️  应用数据库迁移..."
+    cd services/backend && uv run alembic upgrade head
+
+# 回滚数据库迁移
+db-downgrade:
+    @echo "⬇️  回滚数据库迁移..."
+    cd services/backend && uv run alembic downgrade -1
+
+# 重置数据库
+db-reset:
+    @echo "🔄 重置数据库..."
+    docker-compose -f infra/docker-compose/dev.yml down -v
+    docker-compose -f infra/docker-compose/dev.yml up -d postgres
+    sleep 3
+    just db-upgrade
+
+# 备份数据库
+db-backup:
+    @echo "💾 备份数据库..."
+    ./scripts/db-backup.sh
+
+# === 代码生成 ===
+
+# 生成 TypeScript 类型
+codegen:
+    @echo "⚡ 生成 TypeScript 类型..."
+    ./scripts/codegen.sh
+
+# === Kubernetes ===
+
+# 应用 Kubernetes 配置
+k8s-apply:
+    @echo "☸️  应用 Kubernetes 配置..."
+    kubectl apply -f infra/kubernetes/core-infra/
+
+# 部署到 Kubernetes
+k8s-deploy:
+    @echo "🚀 部署到 Kubernetes..."
+    helm upgrade --install backend infra/kubernetes/helm-charts/backend/
+    helm upgrade --install frontend infra/kubernetes/helm-charts/frontend/
+
+# 查看 Kubernetes 状态
+k8s-status:
+    @echo "📊 Kubernetes 状态..."
+    kubectl get pods -n {{ cookiecutter.kubernetes_namespace }}
+    kubectl get svc -n {{ cookiecutter.kubernetes_namespace }}
+
+# === OpenTofu/Terraform ===
+
+# 初始化 Terraform
+tf-init:
+    @echo "🏗️  初始化 Terraform..."
+    cd infra/tofu && tofu init
+
+# Terraform 计划
+tf-plan:
+    @echo "📋 Terraform 计划..."
+    cd infra/tofu && tofu plan
+
+# 应用 Terraform 变更
+tf-apply:
+    @echo "✅ 应用 Terraform 变更..."
+    cd infra/tofu && tofu apply
+
+# 销毁基础设施
+tf-destroy:
+    @echo "💣 销毁基础设施..."
+    cd infra/tofu && tofu destroy
+
+# === 监控 ===
+
+# 启动监控套件
+monitoring-up:
+    @echo "📊 启动监控套件..."
+    docker-compose -f infra/docker-compose/monitoring.yml up -d
+
+# 停止监控套件
+monitoring-down:
+    @echo "🛑 停止监控套件..."
+    docker-compose -f infra/docker-compose/monitoring.yml down
+
+# === 清理 ===
+
+# 清理构建产物
+clean:
+    @echo "🧹 清理构建产物..."
+    pnpm clean
+    find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+    find . -type d -name ".pytest_cache" -exec rm -rf {} + 2>/dev/null || true
+    find . -type d -name ".ruff_cache" -exec rm -rf {} + 2>/dev/null || true
+    find . -type d -name "dist" -exec rm -rf {} + 2>/dev/null || true
+
+# 深度清理（包括 node_modules 和虚拟环境）
+clean-all: clean
+    @echo "🧹🧹 深度清理..."
+    find . -type d -name "node_modules" -exec rm -rf {} + 2>/dev/null || true
+    find . -type d -name ".venv" -exec rm -rf {} + 2>/dev/null || true
+    find . -type d -name "venv" -exec rm -rf {} + 2>/dev/null || true
+
+# === 文档 ===
+
+# 生成 API 文档
+docs-api:
+    @echo "📚 生成 API 文档..."
+    cd services/backend && uv run python -m mkdocs build
+
+# 启动文档服务器
+docs-serve:
+    @echo "📖 启动文档服务器..."
+    cd services/backend && uv run python -m mkdocs serve
+
+# === 安全 ===
+
+# 安全审计
+security-audit:
+    @echo "🔒 安全审计..."
+    pnpm audit
+    cd services/backend && uv run pip-audit
+    cd services/ml-api && uv run pip-audit
+    cd services/audio-api && uv run pip-audit
+
+# 扫描 Docker 镜像漏洞
+security-scan-docker:
+    @echo "🔍 扫描 Docker 镜像..."
+    docker scan {{ cookiecutter.project_slug }}-backend:latest
+    docker scan {{ cookiecutter.project_slug }}-frontend:latest
+
+# === CI/CD ===
+
+# 模拟 CI 流程
+ci:
+    @echo "🤖 模拟 CI 流程..."
+    just lint
+    just typecheck
+    just test
+    just build
+
+# === 其他 ===
+
+# 查看日志
+logs service="":
+    {% raw %}@if [ -z "{{ service }}" ]; then \
+        docker-compose logs -f; \
+    else \
+        docker-compose logs -f {{ service }}; \
+    fi{% endraw %}
+
+# 进入容器 shell
+shell service:
+    {% raw %}docker-compose exec {{ service }} sh{% endraw %}
+
+# 显示项目信息
+info:
+    @echo "📦 项目: {{ cookiecutter.project_name }}"
+    @echo "📌 版本: {{ cookiecutter.version }}"
+    @echo "👤 作者: {{ cookiecutter.author_name }}"
+    @echo "🐍 Python: {{ cookiecutter.python_version }}"
+    @echo "📗 Node: {{ cookiecutter.node_version }}"
+

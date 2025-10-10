@@ -1,0 +1,25 @@
+# 应用配置 ConfigMap
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: {{ cookiecutter.kubernetes_namespace }}
+data:
+  # 环境配置
+  ENVIRONMENT: "production"
+  LOG_LEVEL: "INFO"
+  
+  # 应用配置
+  APP_NAME: "{{ cookiecutter.project_name }}"
+  APP_VERSION: "{{ cookiecutter.version }}"
+  
+  # CORS 配置
+  CORS_ORIGINS: "https://{{ cookiecutter.domain_name }}"
+  
+  # 监控配置
+  METRICS_ENABLED: "true"
+  TRACING_ENABLED: "true"
+  JAEGER_AGENT_HOST: "jaeger-agent"
+  JAEGER_AGENT_PORT: "6831"
+

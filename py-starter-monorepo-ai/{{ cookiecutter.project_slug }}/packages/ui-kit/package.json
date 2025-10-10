@@ -1,0 +1,46 @@
+{
+  "name": "@{{ cookiecutter.project_slug }}/ui-kit",
+  "version": "{{ cookiecutter.version }}",
+  "description": "共享 UI 组件库",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./components/*": {
+      "import": "./dist/components/*.mjs",
+      "require": "./dist/components/*.js",
+      "types": "./dist/components/*.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "lint": "eslint src --ext .ts,.vue",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "vue": "^3.3.0"
+  },
+  "devDependencies": {
+    "@{{ cookiecutter.project_slug }}/eslint-config-custom": "workspace:*",
+    "@{{ cookiecutter.project_slug }}/tsconfig-custom": "workspace:*",
+    "@types/node": "^20.10.0",
+    "eslint": "^8.55.0",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3",
+    "vue": "^3.3.11"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  }
+}
+

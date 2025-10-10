@@ -1,0 +1,14 @@
+apiVersion: v2
+name: frontend
+description: {{ cookiecutter.project_name }} Frontend Nuxt.js Application Helm Chart
+type: application
+version: {{ cookiecutter.version }}
+appVersion: "{{ cookiecutter.version }}"
+keywords:
+  - nuxt
+  - vue
+  - frontend
+maintainers:
+  - name: {{ cookiecutter.author_name }}
+    email: {{ cookiecutter.author_email }}
+

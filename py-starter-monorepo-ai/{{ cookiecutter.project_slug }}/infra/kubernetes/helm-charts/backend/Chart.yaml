@@ -1,0 +1,14 @@
+apiVersion: v2
+name: backend
+description: {{ cookiecutter.project_name }} Backend API Helm Chart
+type: application
+version: {{ cookiecutter.version }}
+appVersion: "{{ cookiecutter.version }}"
+keywords:
+  - fastapi
+  - python
+  - api
+maintainers:
+  - name: {{ cookiecutter.author_name }}
+    email: {{ cookiecutter.author_email }}
+
