@@ -1,0 +1,117 @@
+# 开发环境基础设施服务
+# PostgreSQL, Redis, MinIO
+
+version: '3.8'
+
+services:
+  # PostgreSQL 数据库
+  postgres:
+    image: postgres:16-alpine
+    container_name: {{ cookiecutter.project_slug }}-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: {{ cookiecutter.database_user }}
+      POSTGRES_PASSWORD: postgres_password  # 开发环境密码，生产环境请修改
+      POSTGRES_DB: {{ cookiecutter.database_name }}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+      TZ: Asia/Shanghai
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d  # 初始化脚本
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U {{ cookiecutter.database_user }}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - {{ cookiecutter.project_slug }}-network
+
+  # Redis 缓存
+  redis:
+    image: redis:7-alpine
+    container_name: {{ cookiecutter.project_slug }}-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass redis_password  # 开发环境密码
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - {{ cookiecutter.project_slug }}-network
+
+  # MinIO 对象存储 (S3 兼容)
+  minio:
+    image: minio/minio:latest
+    container_name: {{ cookiecutter.project_slug }}-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9000:9000"  # API 端口
+      - "9001:9001"  # Web 控制台端口
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    networks:
+      - {{ cookiecutter.project_slug }}-network
+
+  # MinIO 初始化（创建默认 bucket）
+  minio-setup:
+    image: minio/mc:latest
+    container_name: {{ cookiecutter.project_slug }}-minio-setup
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc alias set myminio http://minio:9000 minioadmin minioadmin;
+      /usr/bin/mc mb myminio/{{ cookiecutter.project_slug }}-uploads --ignore-existing;
+      /usr/bin/mc anonymous set public myminio/{{ cookiecutter.project_slug }}-uploads;
+      echo 'MinIO setup completed';
+      exit 0;
+      "
+    networks:
+      - {{ cookiecutter.project_slug }}-network
+
+  # Adminer (数据库管理工具)
+  adminer:
+    image: adminer:latest
+    container_name: {{ cookiecutter.project_slug }}-adminer
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+      ADMINER_DESIGN: nette
+    depends_on:
+      - postgres
+    networks:
+      - {{ cookiecutter.project_slug }}-network
+
+# 数据卷
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  minio_data:
+    driver: local
+
+# 网络
+networks:
+  {{ cookiecutter.project_slug }}-network:
+    driver: bridge
+

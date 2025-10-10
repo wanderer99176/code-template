@@ -1,0 +1,176 @@
+[project]
+name = "{{ cookiecutter.package_name }}"
+version = "{{ cookiecutter.version }}"
+description = "{{ cookiecutter.description }} - Backend API"
+authors = [
+    {name = "{{ cookiecutter.author_name }}", email = "{{ cookiecutter.author_email }}"}
+]
+readme = "README.md"
+requires-python = ">={{ cookiecutter.python_version }}"
+license = {text = "{{ cookiecutter.license }}"}
+
+# 核心依赖
+dependencies = [
+    # Web 框架
+    "fastapi[all]>=0.109.0",
+    "uvicorn[standard]>=0.27.0",
+    "gunicorn>=21.2.0",
+    
+    # 数据库
+    "sqlmodel>=0.0.14",
+    "alembic>=1.13.1",
+    "psycopg2-binary>=2.9.9",
+    "asyncpg>=0.29.0",
+    
+    # Redis 和缓存
+    "redis[hiredis]>=5.0.1",
+    "fastapi-cache2[redis]>=0.2.1",
+    
+    # 异步任务
+    "arq>=0.25.0",
+    
+    # 数据验证
+    "pydantic>=2.5.0",
+    "pydantic-settings>=2.1.0",
+    "email-validator>=2.1.0",
+    
+    # 安全
+    "python-jose[cryptography]>=3.3.0",
+    "passlib[bcrypt]>=1.7.4",
+    "python-multipart>=0.0.6",
+    
+    # S3/MinIO
+    "boto3>=1.34.0",
+    
+    # 工具
+    "python-dotenv>=1.0.0",
+    "httpx>=0.26.0",
+    "tenacity>=8.2.3",
+    
+    # 监控
+    "starlette-prometheus>=0.9.0",
+    "opentelemetry-api>=1.22.0",
+    "opentelemetry-sdk>=1.22.0",
+    "opentelemetry-instrumentation-fastapi>=0.43b0",
+    
+    # 日志
+    "structlog>=23.3.0",
+    
+    # 其他
+    "python-slugify>=8.0.1",
+    "pillow>=10.2.0",
+]
+
+# 开发依赖
+[project.optional-dependencies]
+dev = [
+    # 测试
+    "pytest>=7.4.3",
+    "pytest-asyncio>=0.23.2",
+    "pytest-cov>=4.1.0",
+    "pytest-mock>=3.12.0",
+    "httpx>=0.26.0",
+    "faker>=22.0.0",
+    
+    # 代码质量
+    "ruff>=0.1.9",
+    "mypy>=1.8.0",
+    "pre-commit>=3.6.0",
+    
+    # 开发工具
+    "ipython>=8.20.0",
+    "ipdb>=0.13.13",
+    "jupyter>=1.0.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/{{ cookiecutter.package_name }}"]
+
+# Ruff 配置
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E",     # pycodestyle errors
+    "W",     # pycodestyle warnings
+    "F",     # pyflakes
+    "I",     # isort
+    "B",     # flake8-bugbear
+    "C4",    # flake8-comprehensions
+    "UP",    # pyupgrade
+    "ARG",   # flake8-unused-arguments
+    "SIM",   # flake8-simplify
+]
+ignore = [
+    "E501",  # 行长度由 formatter 处理
+    "B008",  # FastAPI 依赖注入需要在函数调用中使用默认参数
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+"tests/**/*.py" = ["ARG"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["{{ cookiecutter.package_name }}"]
+
+# Pytest 配置
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "-v",
+    "--strict-markers",
+    "--tb=short",
+    "--cov={{ cookiecutter.package_name }}",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+]
+markers = [
+    "unit: 单元测试",
+    "integration: 集成测试",
+    "slow: 慢速测试",
+]
+
+# MyPy 配置
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+check_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+
+[[tool.mypy.overrides]]
+module = [
+    "alembic.*",
+    "arq.*",
+    "fastapi_cache.*",
+]
+ignore_missing_imports = true
+
+# Coverage 配置
+[tool.coverage.run]
+source = ["{{ cookiecutter.package_name }}"]
+omit = [
+    "*/tests/*",
+    "*/migrations/*",
+]
+
+[tool.coverage.report]
+precision = 2
+show_missing = true
+skip_covered = false
+

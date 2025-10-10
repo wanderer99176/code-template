@@ -1,0 +1,10 @@
+# pnpm workspace 配置
+# 定义 monorepo 中的所有包
+
+packages:
+  # 前端应用
+  - 'services/frontend'
+  
+  # 共享包
+  - 'packages/*'
+

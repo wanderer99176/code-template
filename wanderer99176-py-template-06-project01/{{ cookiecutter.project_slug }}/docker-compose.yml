@@ -1,0 +1,254 @@
+# 完整的应用栈 Docker Compose 配置
+# 包括所有服务和基础设施
+
+version: '3.8'
+
+services:
+  # ==================== 基础设施 ====================
+  
+  # PostgreSQL
+  postgres:
+    image: postgres:16-alpine
+    container_name: {{ cookiecutter.project_slug }}-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: {{ cookiecutter.database_user }}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: {{ cookiecutter.database_name }}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U {{ cookiecutter.database_user }}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  # Redis
+  redis:
+    image: redis:7-alpine
+    container_name: {{ cookiecutter.project_slug }}-redis
+    restart: unless-stopped
+    command: redis-server --requirepass ${REDIS_PASSWORD:-redis}
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  # MinIO
+  minio:
+    image: minio/minio:latest
+    container_name: {{ cookiecutter.project_slug }}-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    networks:
+      - app-network
+
+  # ==================== 应用服务 ====================
+  
+  # Backend API
+  backend:
+    build:
+      context: ./services/backend
+      dockerfile: Dockerfile
+    container_name: {{ cookiecutter.project_slug }}-backend
+    restart: unless-stopped
+    environment:
+      # 数据库
+      DATABASE_URL: postgresql://{{ cookiecutter.database_user }}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/{{ cookiecutter.database_name }}
+      # Redis
+      REDIS_URL: redis://:${REDIS_PASSWORD:-redis}@redis:6379/0
+      # JWT
+      SECRET_KEY: ${SECRET_KEY:-your-secret-key-change-in-production}
+      ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 30
+      # CORS
+      BACKEND_CORS_ORIGINS: '["http://localhost:3000","http://frontend:3000"]'
+      # S3/MinIO
+      S3_ENDPOINT_URL: http://minio:9000
+      S3_ACCESS_KEY_ID: ${MINIO_ROOT_USER:-minioadmin}
+      S3_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD:-minioadmin}
+      S3_BUCKET_NAME: {{ cookiecutter.project_slug }}-uploads
+      # 其他
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    volumes:
+      - ./services/backend:/app:cached  # 开发模式热重载
+    command: uvicorn {{ cookiecutter.package_name }}.main:app --host 0.0.0.0 --port 8000 --reload
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Frontend
+  frontend:
+    build:
+      context: ./services/frontend
+      dockerfile: Dockerfile
+    container_name: {{ cookiecutter.project_slug }}-frontend
+    restart: unless-stopped
+    environment:
+      NUXT_PUBLIC_API_BASE_URL: http://backend:8000
+      NUXT_PUBLIC_WS_URL: ws://backend:8000
+      NUXT_PUBLIC_SITE_URL: http://localhost:3000
+      NUXT_PUBLIC_SITE_NAME: {{ cookiecutter.project_name }}
+      NODE_ENV: ${NODE_ENV:-development}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    volumes:
+      - ./services/frontend:/app:cached
+      - /app/node_modules  # 避免覆盖容器内的 node_modules
+      - /app/.nuxt
+    command: pnpm dev
+    networks:
+      - app-network
+
+  {% if cookiecutter.enable_ml_api == 'yes' -%}
+  # ML API (YOLOv8)
+  ml-api:
+    build:
+      context: ./services/ml-api
+      dockerfile: Dockerfile
+    container_name: {{ cookiecutter.project_slug }}-ml-api
+    restart: unless-stopped
+    environment:
+      MODEL_PATH: /app/models/yolov8n.pt
+      DEVICE: ${ML_DEVICE:-cpu}  # 使用 'cuda' 启用 GPU
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./services/ml-api:/app:cached
+      - ml_models:/app/models  # 持久化模型
+    {% if cookiecutter.use_gpu == 'yes' -%}
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    {% endif -%}
+    command: uvicorn main:app --host 0.0.0.0 --port 8001 --reload
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+  {% endif -%}
+
+  {% if cookiecutter.enable_audio_api == 'yes' -%}
+  # Audio API (Whisper)
+  audio-api:
+    build:
+      context: ./services/audio-api
+      dockerfile: Dockerfile
+    container_name: {{ cookiecutter.project_slug }}-audio-api
+    restart: unless-stopped
+    environment:
+      MODEL_SIZE: ${WHISPER_MODEL_SIZE:-base}
+      DEVICE: ${AUDIO_DEVICE:-cpu}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./services/audio-api:/app:cached
+      - audio_models:/app/models
+    {% if cookiecutter.use_gpu == 'yes' -%}
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    {% endif -%}
+    command: uvicorn main:app --host 0.0.0.0 --port 8002 --reload
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+  {% endif -%}
+
+  {% if cookiecutter.enable_scraper == 'yes' -%}
+  # Scraper
+  scraper:
+    build:
+      context: ./services/scraper
+      dockerfile: Dockerfile
+    container_name: {{ cookiecutter.project_slug }}-scraper
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://{{ cookiecutter.database_user }}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/{{ cookiecutter.database_name }}
+      REDIS_URL: redis://:${REDIS_PASSWORD:-redis}@redis:6379/1
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ./services/scraper:/app:cached
+    # 按需启动，不自动运行
+    # command: scrapy crawl your_spider
+    networks:
+      - app-network
+  {% endif -%}
+
+# 数据卷
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:
+  {% if cookiecutter.enable_ml_api == 'yes' -%}
+  ml_models:
+  {% endif -%}
+  {% if cookiecutter.enable_audio_api == 'yes' -%}
+  audio_models:
+  {% endif -%}
+
+# 网络
+networks:
+  app-network:
+    driver: bridge
+

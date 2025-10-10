@@ -1,0 +1,48 @@
+{
+  "name": "{{ cookiecutter.project_slug }}",
+  "version": "{{ cookiecutter.version }}",
+  "description": "{{ cookiecutter.description }}",
+  "private": true,
+  "author": "{{ cookiecutter.author_name }} <{{ cookiecutter.author_email }}>",
+  "license": "{{ cookiecutter.license }}",
+  "workspaces": [
+    "services/frontend",
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">={{ cookiecutter.node_version }}",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.0",
+  "scripts": {
+    "dev": "turbo run dev --parallel",
+    "dev:frontend": "turbo run dev --filter=frontend",
+    "dev:backend": "cd services/backend && uvicorn {{ cookiecutter.package_name }}.main:app --reload --host 0.0.0.0 --port 8000",
+    "build": "turbo run build",
+    "build:frontend": "turbo run build --filter=frontend",
+    "test": "turbo run test",
+    "test:frontend": "turbo run test --filter=frontend",
+    "test:backend": "cd services/backend && pytest",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix",
+    "format": "prettier --write \"**/*.{js,ts,tsx,vue,json,md}\"",
+    "format:check": "prettier --check \"**/*.{js,ts,tsx,vue,json,md}\"",
+    "typecheck": "turbo run typecheck",
+    "clean": "turbo run clean && rm -rf node_modules .turbo",
+    "codegen": "bash scripts/codegen.sh",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "infra:up": "docker-compose -f infra/docker-compose/dev.yml up -d",
+    "infra:down": "docker-compose -f infra/docker-compose/dev.yml down",
+    "monitoring:up": "docker-compose -f infra/docker-compose/monitoring.yml up -d",
+    "monitoring:down": "docker-compose -f infra/docker-compose/monitoring.yml down"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.27.1",
+    "prettier": "^3.2.5",
+    "turbo": "^1.12.5",
+    "typescript": "^5.3.3"
+  }
+}
+

@@ -1,0 +1,18 @@
+{
+  "name": "@{{ cookiecutter.project_slug }}/eslint-config-custom",
+  "version": "{{ cookiecutter.version }}",
+  "description": "共享的 ESLint 配置",
+  "main": "index.js",
+  "private": true,
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-vue": "^9.20.1"
+  },
+  "peerDependencies": {
+    "eslint": "^8.0.0",
+    "typescript": "^5.0.0"
+  }
+}
+

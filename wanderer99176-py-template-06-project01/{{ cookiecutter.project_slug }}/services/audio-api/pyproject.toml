@@ -1,0 +1,24 @@
+[project]
+name = "{{ cookiecutter.project_slug }}-audio-api"
+version = "{{ cookiecutter.version }}"
+description = "音频处理 API - Whisper"
+requires-python = ">={{ cookiecutter.python_version }}"
+
+dependencies = [
+    "fastapi[all]>=0.109.0",
+    "uvicorn[standard]>=0.27.0",
+    "faster-whisper>=0.10.0",  # Fast-Whisper
+    "ffmpeg-python>=0.2.0",
+    "python-multipart>=0.0.6",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.3",
+    "ruff>=0.1.9",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+

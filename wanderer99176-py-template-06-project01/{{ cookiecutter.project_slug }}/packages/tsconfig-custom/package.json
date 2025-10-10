@@ -1,0 +1,9 @@
+{
+  "name": "@{{ cookiecutter.project_slug }}/tsconfig-custom",
+  "version": "{{ cookiecutter.version }}",
+  "description": "共享的 TypeScript 配置",
+  "main": "base.json",
+  "private": true,
+  "files": ["base.json", "nuxt.json", "node.json"]
+}
+
